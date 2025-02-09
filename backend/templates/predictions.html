@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Prediction Results</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Text</th>
+                <th>Predicted Rating</th>
+                <th>True Rating</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for result in results %}
+            <tr>
+                <td>{{ result.text }}</td>
+                <td>{{ result.predicted_rating }}</td>
+                <td>{{ result.true_rating }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

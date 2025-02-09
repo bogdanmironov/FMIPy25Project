@@ -40,8 +40,11 @@ class SentimentAnalysisModel(nn.Module):
         # conv1d expects the shape of input as following
         # (batch_size , hidden_dim*2 , sequence_length) so we need to convert the last output to this
 
-        # input (batch_size , sequence_length , hidden_dim*2) -> !(batch_size , hidden_dim*2 , sequence_length)! (used permute in forward)
-        self.conv1 = nn.Conv1d(cfg['hidden_dim'] * (2 if cfg['bidirectional'] else 1), 128, kernel_size=3, padding=1)
+        # input (batch_size , sequence_length , hidden_dim*2)
+        # -> !(batch_size , hidden_dim*2 , sequence_length)! (used permute in forward)
+        self.conv1 = nn.Conv1d(
+            cfg['hidden_dim'] * (2 if cfg['bidirectional'] else 1), 128, kernel_size=3, padding=1
+        )
         # output: (batch_size,out_channels,sequence_length)
 
         # input: (batch_size,out_channels,sequence_length)
