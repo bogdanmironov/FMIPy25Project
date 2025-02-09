@@ -1,3 +1,4 @@
+import os
 from collections import OrderedDict
 import numpy as np
 import torch
@@ -7,13 +8,13 @@ import re
 from torch import nn
 
 cfg = {
-    "vocab_size": 20000,
-    "emb_dim": 64,
-    "hidden_dim": 64,
-    "num_layers": 3,
-    "bidirectional": True,
-    "dropout": 0.6,
-    "seq_len": 256,
+    'vocab_size': 20000,
+    'emb_dim': 64,
+    'hidden_dim': 64,
+    'num_layers': 3,
+    'bidirectional': True,
+    'dropout': 0.6,
+    'seq_len': 256,
 }
 
 
@@ -124,32 +125,36 @@ def inference(text: str, model: SentimentAnalysisModel, tokenizer: Tokenizer, de
 
 
 def get_prediction(text: str) -> int:
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    model_path = os.path.join(current_dir, 'sentiment_analysis_model.pth')
+    tokenizer_path = os.path.join(current_dir, 'bpe_tokenizer.json')
+
     res, _ = inference(
         text,
-        get_model('sentiment_analysis_model.pth'),
-        get_tokenizer('bpe_tokenizer.json'),
+        get_model(model_path),
+        get_tokenizer(tokenizer_path),
         torch.device('cuda' if torch.cuda.is_available() else 'cpu'))
     return res
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     loaded_model = get_model('sentiment_analysis_model.pth')
     tokenizer = get_tokenizer('bpe_tokenizer.json')
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    text_to_analyze = "what a very bad movie"
+    text_to_analyze = 'what a very bad movie'
     rating, probability = inference(text_to_analyze, loaded_model, tokenizer, device)
-    print(f"Predicted Rating: {rating}")
-    print(f"Probability: {probability[rating - 1]:.4f}")
+    print(f'Predicted Rating: {rating}')
+    print(f'Probability: {probability[rating - 1]:.4f}')
 
-    text_to_analyze = "This movie was absolutely incredible, a must-watch!"
+    text_to_analyze = 'This movie was absolutely incredible, a must-watch!'
     rating, probabilities = inference(text_to_analyze, loaded_model, tokenizer, device)
-    print(f"Predicted Rating: {rating}")
-    print(f"Class Probabilities: {['{:.4f}'.format(p) for p in probabilities]}")
+    print(f'Predicted Rating: {rating}')
+    print(f'Class Probabilities: {["{:.4f}".format(p) for p in probabilities]}')
 
-    text_to_analyze = "Mid movie, would not recommend, but i would watch it again"
+    text_to_analyze = 'Mid movie, would not recommend, but i would watch it again'
     rating, probabilities = inference(text_to_analyze, loaded_model, tokenizer, device)
-    print(f"Predicted Rating: {rating}")
-    print(f"Class Probabilities: {['{:.4f}'.format(p) for p in probabilities]}")
+    print(f'Predicted Rating: {rating}')
+    print(f'Class Probabilities: {["{:.4f}".format(p) for p in probabilities]}')
 
-    print(get_prediction("Was not impressed by the movie"))
+    print(get_prediction('Was not impressed by the movie'))
